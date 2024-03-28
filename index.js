@@ -1,9 +1,27 @@
-const express = require('express');
-const AppRoutes = require('./src/routes');
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import { AllRouters } from "./Routes/routers.js";
+
 const app = express();
+
+dotenv.config();
+
+//Middleware
 app.use(express.json());
 
-app.use('/', AppRoutes);
+app.get("/", (req, res) => {
+  res.status(200).send("Hello World !!!");
+});
 
+app.use("/", AllRouters);
 
-app.listen(8000, () => console.log("Server listening to Port 8000"));
+//Create MonogDB connection
+const PORT = process.env.PORT;
+const MONGO_URL = process.env.MONGO_URL;
+mongoose.set("strictQuery", false);
+mongoose.connect(`${MONGO_URL}`, () => {
+  app.listen(PORT, () =>
+    console.log(`Server is running on ${PORT} && Mongo is connected `)
+  );
+});
